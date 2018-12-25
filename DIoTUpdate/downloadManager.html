@@ -1,0 +1,1024 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<title>IOT Device Update Project</title>
+
+
+
+	<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,700,800" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+
+	<!-- Magnific Popup -->
+	<link rel="stylesheet" href="css/magnific-popup.css">
+
+	<!-- Owl Carousel  -->
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+	<script src="./node_modules/web3/dist/web3.min.js"></script>
+
+	</head>
+	<header id="myHeader" class="custom-header">
+			<h1 class="white-text-center">Update Manager</h1>
+			<hr/>
+	</header>
+
+
+	<!-- owner-radioDiv -->
+	<div id="owner-container" class="scrollmenu">	
+		<div class="owner-radioDiv">
+			<a>
+				<label for="owner-1-selector"><img class="img-rounded owner-item-image" src="images/owners/owner1.PNG"></label>
+				<label id="owner-1-label" class="owner-label" for="owner-1-selector">Vendor 1</label>
+				<input type="radio" name="whichOwner" value="0" id="owner-1-selector" onclick="loadDevices(0)">
+			</a>
+		</div>
+		<div class="owner-radioDiv">
+			<a>
+				<label for="owner-2-selector"><img class="img-rounded owner-item-image" src="images/owners/owner2.PNG"></label>
+				<label id="owner-2-label" class="owner-label" for="owner-2-selector">Vendor 2</label>
+				<input type="radio" name="whichOwner" value="1" id="owner-2-selector" onclick="loadDevices(1)">
+			</a>
+		</div>
+		<div class="owner-radioDiv">
+			<a>
+				<label for="owner-3-selector"><img class="img-rounded owner-item-image" src="images/owners/owner3.PNG"></label>
+				<label id="owner-3-label" class="owner-label" for="owner-3-selector">Vendor 3</label>
+				<input type="radio" name="whichOwner" value="2" id="owner-3-selector" onclick="loadDevices(2)">
+			</a>
+		</div>
+		<div class="owner-radioDiv">
+			<a>
+				<label for="owner-4-selector"><img class="img-rounded owner-item-image" src="images/owners/owner4.PNG"></label>
+				<label id="owner-4-label" class="owner-label" for="owner-4-selector">Vendor 4</label>
+				<input type="radio" name="whichOwner" value="3" id="owner-4-selector" onclick="loadDevices(3)">
+			</a>
+		</div>
+		<div class="owner-radioDiv">
+			<a>
+				<label for="owner-5-selector"><img class="img-rounded owner-item-image" src="images/owners/owner.PNG"></label>
+				<label id="owner-5-label" class="owner-label" for="owner-5-selector">Network Owner</label>
+				<input type="radio" name="whichOwner" value="4" id="owner-5-selector" onclick="loadDevices(4)">
+			</a>
+		</div>
+	</div><br>
+
+	<body class="custom-background">	
+		<div class="container">
+			<div id="endPeersRow" class="item-row">
+			</div>
+		</div>
+
+		<!-- Pending Updates Collapse -->
+		<div id="accordion" class="custom-card-holder">
+			<div class="card">
+			  <div class="card-header" id="headingOne">
+				<h5 class="mb-0">
+					<div class="text-center">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							Pending Updates
+						</button>
+				  	</div>
+				</h5>
+			  </div>
+		  
+			  <div id="collapseOne" class="collapse in" aria-labelledby="headingOne" data-parent="#accordion">
+				<div class="card-body">
+					<div id="pending-updates-content" class="custom-card-content-holder"></div>
+				</div>
+			  </div>
+			</div>
+		</div>
+
+		<!-- Device Owner Pending Updates Template -->
+		<div id = "deviceOwnerPendingUpdateTemplate" style="display: none;">
+			<div class="custom-update-template">
+				<div class="row">
+					<div class="custom-update-template-col1">
+							<img alt="140x140" data-src="holder.js/140x140" class="img-rounded update-item-image" src="" data-holder-rendered="true"><br/>
+							<div class="text-center">
+								<strong>Device IP</strong>: <span class="update-device-IP">-</span>
+							</div>
+					</div>
+					<div class="custom-update-template-col2">
+						<strong>Status</strong>: <span class="update-status"><font color="red">Pending</font></span><br/> <div class="custom-marginal-space"></div>
+						<strong>Update File</strong>: <br/><span class="update-file">-</span><br/> <div class="custom-marginal-space"></div>
+						<strong>Checksum</strong>: <br/><span class="update-hash">-</span><br/> <div class="custom-marginal-space"></div>
+						<strong>Request Time</strong>: <span class="update-request-time">-</span><br/> <div class="custom-marginal-space"></div>
+						<label class="error-handler"><font color="red"></font></label>
+					</div>
+					<div class="custom-update-template-col-butcol"> <br/><br/><br/><br/>
+						<div class="row">
+							<button class="custom-update-button update-button-cancel" type="button" data-id="0" onclick="cancelPendingUpdate()">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Network Owner Pending Updates Template -->
+		<div id = "networkOwnerPendingUpdateTemplate" style="display: none;">
+			<div class="custom-update-template">
+				<div class="row">
+					<div class="custom-update-template-col1">
+							<img alt="140x140" data-src="holder.js/140x140" class="img-rounded update-item-image" src="" data-holder-rendered="true"><br/>
+							<div class="text-center">
+								<strong>Device IP</strong>: <span class="update-device-IP">-</span>
+							</div> <div class="custom-marginal-space"></div>
+							<div class="text-center">
+								<strong>Device Owner</strong>: <span class="update-device-owner">-</span>
+							</div>
+					</div>
+					<div class="custom-update-template-col2">
+						<strong>Status</strong>: <span class="update-status"><font color="red">Pending</font></span><br/> <div class="custom-marginal-space"></div>
+						<strong>Update File</strong>: <br/><span class="update-file">-</span><br/> <div class="custom-marginal-space"></div>
+						<strong>Update Price</strong>: <span class="update-request-price">-</span><br/> <div class="custom-marginal-space"></div>
+						<strong>Checksum</strong>: <br/><span class="update-hash">-</span><br/> <div class="custom-marginal-space"></div>
+						<strong>Request Time</strong>: <span class="update-request-time">-</span><br/> <div class="custom-marginal-space"></div>
+						<strong>Transporter</strong>: <span class="update-offer-transporter">-</span><br/><div class="custom-marginal-space"></div>
+						<strong>Transport Price</strong>: <span class="update-offer-price">-</span><br/>
+					</div>
+					<div class="custom-update-template-col-butcol"> <br/> <br/>
+						<div class="row">
+							<button class="custom-update-button update-button-refresh" type="button" data-id="0" onclick="refreshUpdateStatus()">Refresh</button>
+						</div> <div class="custom-marginal-space"></div>
+						<div class="row">
+							<button class="custom-update-button update-button-pay" type="button" data-id="0" onclick="checkForFinalize()">Pay</button>
+						</div><div class="custom-marginal-space"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Device Owner End Node Template -->
+		<div id="deviceOwnerEndPeerTemplate" style="display: none;">
+			<div class="col-sm-6 col-md-4 col-lg-3">
+				<div class="panel panel-default panel-pet">
+					<div class="panel-heading">
+						<h3 class="panel-title text-center">Device IP</h3>						
+					</div>
+
+					<div class="panel-body">
+						<img alt="140x140" data-src="holder.js/140x140" class="img-rounded device-item-image" src="" data-holder-rendered="true">
+						<br/>
+						<strong>Owner</strong>: <span class="device-owner">device owner</span><br/>
+						<strong>Last Update File</strong>: <br/><span class="device-file">-</span><br/>
+						<strong>Last Update Time</strong>: <br/><span class="device-time">-</span><br/><br/>
+						<div class="text-center">
+							<button class="btn btn-primary btn-update" type="button" data-id="0" onclick="openUpdateModal()">Update</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Network Owner End Node Template -->
+		<div id="networkOwnerEndPeerTemplate" style="display: none;">
+			<div class="col-sm-6 col-md-4 col-lg-3">
+				<div class="panel panel-default panel-pet">
+					<div class="panel-heading">
+						<h3 class="panel-title text-center">Device IP</h3>						
+					</div>
+
+					<div class="panel-body">
+						<img alt="140x140" data-src="holder.js/140x140" class="img-rounded device-item-image" src="" data-holder-rendered="true">
+						<br/>
+						<strong>Owner</strong>: <span class="device-owner">device owner</span><br/>
+						<strong>Last Update File</strong>: <br/><span class="device-file">-</span><br/>
+						<strong>Last Update Time</strong>: <br/><span class="device-time">-</span><br/><br/>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Update Device</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						Device IP:<br>
+						<input id="update-entry-deviceIP" type="text" name="DeviceIP" readonly><br><br>
+						Due Date:<br>
+						<input id="update-entry-dueDate" type="date" name="DueDate" min="2020-13-13"><br><br>
+						Price(szabo): (leave empty or put 0 for free update)<br>
+						<input id="update-entry-price" type="number" name="Price"><br><br>
+						Update File:<br>
+						<input id="update-entry-updateFile" type="file" name="updateFile"><br><br>
+						<label id="update-entry-status"></label>
+					</form>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button id="update-entry-uploadUpdate" type="button" class="btn btn-primary">Confirm</button>
+				</div>
+			</div>
+			</div>
+		</div>
+
+
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="js/jquery.stellar.min.js"></script>
+	<!-- Carousel -->
+	<script src="js/owl.carousel.min.js"></script>
+	<!-- countTo -->
+	<script src="js/jquery.countTo.js"></script>
+	<!-- Magnific Popup -->
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/magnific-popup-options.js"></script>
+	<!-- Main -->
+	<script src="js/main.js"></script>
+	<!-- Web3 -->
+	<script src="./node_modules/web3/dist/web3.min.js"></script>
+
+	<script>
+		window.onload = function() {
+			endPeersInfo = JSON.parse(localStorage.getItem("endPeersInfo"));
+			fullNodesInfo = JSON.parse(localStorage.getItem("fullNodesInfo"));
+			localStorage.setItem("previousOwnerView", -1);
+			loadContract();
+			loadDevices(localStorage.getItem("OwnerView"));
+		};
+
+		function loadContract(){
+			
+			if (typeof web3 !== 'undefined') {
+				web3 = new Web3(web3.currentProvider);
+			} else {
+				// set the provider you want from Web3.providers
+				web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+			}
+			web3.eth.defaultAccount = web3.eth.accounts[0];
+			var UpdateManagerContract = web3.eth.contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "fullNodeIP",
+				"type": "string"
+			},
+			{
+				"name": "target",
+				"type": "string"
+			},
+			{
+				"name": "price",
+				"type": "uint64"
+			},
+			{
+				"name": "bandWidth",
+				"type": "uint40"
+			}
+		],
+		"name": "bidForUpdate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "deviceIP",
+				"type": "string"
+			}
+		],
+		"name": "cancelUpdate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "endPeerIP",
+				"type": "string"
+			},
+			{
+				"name": "timeStamp",
+				"type": "string"
+			}
+		],
+		"name": "finalizeUpdate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "endPeerIP",
+				"type": "string"
+			}
+		],
+		"name": "registerEndPeer",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "fullNodeIP",
+				"type": "string"
+			}
+		],
+		"name": "registerFullNode",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "deviceIP",
+				"type": "string"
+			},
+			{
+				"name": "updateFileName",
+				"type": "string"
+			},
+			{
+				"name": "updateFileHash",
+				"type": "string"
+			},
+			{
+				"name": "price",
+				"type": "uint64"
+			}
+		],
+		"name": "requestUpdate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "endPeerIP",
+				"type": "string"
+			}
+		],
+		"name": "getLatestUpdateInfo",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "endPeerIP",
+				"type": "string"
+			}
+		],
+		"name": "getOngoingUpdateInfo",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint64"
+			},
+			{
+				"name": "",
+				"type": "uint40"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "endPeerIP",
+				"type": "string"
+			}
+		],
+		"name": "getWinnerInfo",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "uint64"
+			},
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "uint64"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+			UpdateManager = UpdateManagerContract.at('0xcad308a987bd3198bb62d15d6c9feff2f12f5d10');
+			for(i = 0; i < endPeersInfo.length; i++){
+				for(j = 0; j < endPeersInfo[i].length; j++){
+					UpdateManager.registerEndPeer(endPeersInfo[i][j], {from: web3.eth.accounts[i+1], gas:3000000}, function(error, result){
+						if(error)
+							alert("error registering end peer with IP: " + endPeersInfo[i][j] + "\n" + "error: " + error + "\n \n");
+					});
+				}
+			}
+			for(i = 0; i < fullNodesInfo.length; i++){
+				for(j = 0; j < fullNodesInfo[i].length; j++){
+					UpdateManager.registerFullNode(fullNodesInfo[i][j], {from: web3.eth.accounts[i+endPeersInfo.length+1], gas:3000000}, function(error, result){
+						if(error)
+							alert("error registering full node with IP: " + fullNodesInfo[i][j] + "\n" + "error: \n" + error + "\n \n");
+					});
+				}
+			}
+		}
+	</script>
+
+	<script>
+		function refresh(){
+			clearPreviousDevices(localStorage.getItem("OwnerView"));
+			localStorage.setItem("previousOwnerView", -1);
+			loadDevices(localStorage.getItem("OwnerView"));
+		}
+
+		function checkForFinalize(){
+			var ownerIndex = parseInt(localStorage.getItem("OwnerView")) + 1;
+			if(ownerIndex === 5){
+				ownerIndex = 0;
+			}
+			var deviceIP = event.target.getAttribute("data-id");
+			var containerID = "device-" + deviceIP;
+			var container = $('#' + containerID);
+			var transferPrice;
+			var bandwidth;
+			var sender;
+			UpdateManager.getOngoingUpdateInfo(deviceIP, {from: web3.eth.accounts[ownerIndex]}, function(error, result){
+				if(!error){
+					if(result[0]!="-" && parseInt(result[1])!=0){
+						sender = result[0];
+						transferPrice = result[1];
+						bandwidth = result[2];
+						updateSimulator(deviceIP, sender, transferPrice, bandwidth);
+					}
+					else{
+						container.find('.error-handler').text("No offers yet to pay for");
+					}
+				}
+				else{
+					alert("error refreshing update while finalizing with ip: " + deviceIP + "\n" + "error: \n" + error + "\n \n");
+				}
+			});
+		}
+
+		function updateSimulator(deviceIP, sender, transferPrice, bandwidth){
+			var key = deviceIP + "-pending-update-info";
+			updateInfo = JSON.parse(localStorage.getItem(key));
+			var totalPrice = (parseInt(updateInfo[1]) + parseInt(transferPrice)) * 1000000000000;
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.open('POST', localStorage.getItem("connectionURL"), true);
+			var formData = new FormData();
+			formData.append("", "");
+			formData.append("command", "finalizePendingFileTransfer");
+			formData.append("target", deviceIP);
+			formData.append("sender", sender);
+			formData.append("transferPrice", transferPrice);
+			formData.append("bandwidth", bandwidth);
+			httpRequest.send(formData);
+			httpRequest.onreadystatechange = function() {
+				if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+					makePayment(deviceIP);
+				}
+				else if(httpRequest.status != 200){
+					alert("error sending finalize req to simulator");
+				}
+			}
+		}
+
+		function makePayment(deviceIP){
+			UpdateManager.getWinnerInfo(deviceIP, {from: web3.eth.accounts[0], gas:3000000}, function(error, result){
+				if(error){
+					alert("error making payment update with ip: " + deviceIP + "\n" + "error: \n" + error + "\n \n");
+				}else if(!error){
+					convert_szabo_to_wei = 1000000000000;
+					_winnerBidder = result[0];
+					_transferPrice = parseInt(result[1]) * convert_szabo_to_wei;
+					_updateOwner = result[2];
+					_updatePrice = parseInt(result[3]) * convert_szabo_to_wei;
+					web3.eth.sendTransaction({to:_winnerBidder, from:web3.eth.accounts[0], value:_transferPrice});
+					if(_updatePrice != 0){
+						web3.eth.sendTransaction({to:_updateOwner, from:web3.eth.accounts[0], value:_updatePrice});
+					}
+					var date = new Date().toLocaleString();
+					UpdateManager.finalizeUpdate(deviceIP, date, {from: web3.eth.accounts[0], gas:3000000}, function(error, result){
+						if(error){
+							alert("error finalizing \n" + error + "\n");
+						} else if(!error){
+							changeLatestView(deviceIP);		
+						}
+					});
+				}
+			});
+		}
+
+		function changeLatestView(deviceIP){
+			UpdateManager.getLatestUpdateInfo(deviceIP, {from: web3.eth.accounts[0]}, function(error, result){
+				if(error){
+					alert("error getting latest update in Network Owner for device IP: " + endPeersInfo[i][j] + "\n" + "error: \n" + error + "\n \n");
+				}else if(!error){
+					var key = result[0]+'-latest-update-info';
+					var value = [];
+					value.push(result[1]);
+					value.push(result[2]);
+					localStorage.setItem(key, JSON.stringify(value));
+					freePendingUpdate(deviceIP);
+					
+				}
+			});
+		}
+
+		function refreshUpdateStatus(){
+			var ownerIndex = parseInt(localStorage.getItem("OwnerView")) + 1;
+			if(ownerIndex === 5)
+				ownerIndex = 0;
+			var deviceIP = event.target.getAttribute("data-id");
+			UpdateManager.getOngoingUpdateInfo(deviceIP, {from: web3.eth.accounts[ownerIndex]}, function(error, result){
+				if(error){
+					alert("error refreshing update with ip: " + deviceIP + "\n" + "error: \n" + error + "\n \n");
+				}else if(!error){
+					var containerID = "#device-" + deviceIP;
+					var container = $(containerID);
+					if(result[0]==="-"){
+						container.find('.error-handler').text("No Offers Yet");
+						container.find('.error-handler').style.color = "red";
+					}else{
+						container.find('.error-handler').text("");
+						container.find('.update-offer-transporter').text(result[0]);
+						container.find('.update-offer-price').text(result[1] + '(szabo)');
+						var key = deviceIP + "-pending-update-info";
+						value = JSON.parse(localStorage.getItem(key));
+						value[4] = result[0];
+						value[5] = result[1]
+						localStorage.setItem(key, JSON.stringify(value));
+						refresh();
+					}
+				}
+			});
+			
+		}
+
+		function cancelPendingUpdate(){
+			var deviceIP = event.target.getAttribute("data-id");
+			var ownerIndex = parseInt(localStorage.getItem("OwnerView")) + 1;
+			if(ownerIndex === 5)
+				ownerIndex = 0;
+			UpdateManager.cancelUpdate(deviceIP, {from: web3.eth.accounts[ownerIndex], gas:3000000}, function(error, result){
+				if(error){
+					alert("error canceling update with ip: " + deviceIP + "\n" + "error: \n" + error + "\n \n");
+				}
+				else if(!error){
+					var httpRequest = new XMLHttpRequest();
+					httpRequest.open('POST', localStorage.getItem("connectionURL"), true);
+					var formData = new FormData();
+					formData.append("", "");
+					formData.append("command", "cancelPendingFileTransfer");
+					formData.append("target", deviceIP);
+					httpRequest.send(formData);
+					httpRequest.onreadystatechange = function() {//Call a function when the state changes.	
+						if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+							freePendingUpdate(deviceIP);
+						}
+						else if(httpRequest.status != 200){
+							alert("error cancling");
+						}
+					}
+				}
+			});
+		}
+
+		function setPendingUpdate(deviceIP, updateFileName, updateHashValue, price){
+			var ownerIndex = parseInt(localStorage.getItem("OwnerView")) + 1;
+			if(ownerIndex === 5)
+				ownerIndex = 0;
+			UpdateManager.requestUpdate(deviceIP, updateFileName, updateHashValue, parseInt(price),{from: web3.eth.accounts[ownerIndex], gas:3000000}, function(error, result){
+				if(error){
+					alert("error in setting update for device IP: " + deviceIP + "\n" + "error: " + error + "\n\n");
+				}
+				else if(!error){
+					var date = new Date().toLocaleString();
+					var key = deviceIP + "-pending-update-info";
+					var value=[];
+					value.push(updateFileName);
+					value.push(price);
+					value.push(updateHashValue);
+					value.push(date);
+					value.push("No Offers Yet!");
+					value.push("No Offers Yet!");
+					value.push("owner-" + ownerIndex);
+					localStorage.setItem(key, JSON.stringify(value));
+					bidForUpdates(deviceIP);
+					refresh();
+				}
+			});
+		}
+
+		function bidForUpdates(targetIP){
+			var limit = 0;
+			for(i = 0; i < fullNodesInfo.length; i++){
+				limit += fullNodesInfo[i].length;
+			}
+			var maxBidders = Math.floor(Math.random() * limit) + 1;
+			var fullNodeBidders = [];
+			var ownerIndexes = [];
+			console.log("max bidders: " + maxBidders + "\n");
+			for(i = 0; i < maxBidders; i++){
+				var ownerIndex;
+				var nodeIndex;
+				do {
+					ownerIndex = Math.floor(Math.random() * fullNodesInfo.length);
+					nodeIndex = Math.floor(Math.random() * fullNodesInfo[ownerIndex].length);
+				}
+				while (fullNodesInfo[ownerIndex].length === 0 || fullNodeBidders.includes(fullNodesInfo[ownerIndex][nodeIndex]));
+				fullNodeBidders.push(fullNodesInfo[ownerIndex][nodeIndex]);
+				ownerIndexes.push(ownerIndex);
+			}
+			var bidders = "";
+			for(i = 0; i < fullNodeBidders.length; i++){
+				bidders = bidders + fullNodeBidders[i] + "-";
+			}
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.open('POST', localStorage.getItem("connectionURL"), true);
+			var formData = new FormData();
+			formData.append("", "");
+			formData.append("command", "calculate");
+			formData.append("target", targetIP);
+			formData.append("fullNodeIPs", bidders);
+			httpRequest.send(formData);
+			httpRequest.onreadystatechange = function() {
+				if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+					price_bw = httpRequest.responseText.split("-");
+					console.log(fullNodeBidders[i] + "  " + targetIP + "  " +  price_bw[i*2] + "  " + price_bw[i*2+1] + "  " + ownerIndexes[i]+1+endPeersInfo.length);
+					for(i = 0; i < maxBidders; i++){
+						sendBid(fullNodeBidders[i], targetIP, price_bw[i*2], price_bw[i*2+1], ownerIndexes[i]+1+endPeersInfo.length);
+					}			
+				}
+				else if(httpRequest.status != 200){
+					alert("error bidding\n" + "target: " + targetIP + "\n" + "full node: " + bidders);
+				}
+			}
+		}
+
+		function sendBid(fullNodeIP, targetIP, inputprice, inputBandwidth, inputFullNodeOwnerIndex){
+			bandWidth = parseInt(inputBandwidth);
+			if(bandWidth === 0){
+				return;
+			} else{
+				var price = parseInt(inputprice);
+				var fullNodeOwnerIndex = parseInt(inputFullNodeOwnerIndex);
+				console.log("bidding from: " + fullNodeIP + " for: " + targetIP + " price: " + price + " bw: " + bandWidth);
+				UpdateManager.bidForUpdate(fullNodeIP, targetIP, price, bandWidth, {from: web3.eth.accounts[fullNodeOwnerIndex], gas:3000000}, function(error, result){
+					if(error){
+						alert("error in bidding for device IP: " + targetIP + " from full node: " + fullNodeIP + "\n" + "error: " + error + "\n\n");
+					}
+				});
+			}
+		}
+
+		function freePendingUpdate(deviceIP){
+			var key = deviceIP + '-pending-update-info';
+			localStorage.removeItem(key);
+			refresh();
+		}
+
+		function loadDevices(ownerInput){
+			var owner = parseInt(ownerInput);
+			var id = "owner-" + (owner+1) + "-selector";
+			document.getElementById(id).checked = true;
+			var previousOwnerView = localStorage.getItem("previousOwnerView");
+			var previousOwner = -1;
+			if(previousOwnerView != null){
+				previousOwner = parseInt(previousOwnerView);
+			}
+			if(previousOwner != owner){
+				clearPreviousDevices(previousOwner);
+				clearPreviousUpdates();
+				localStorage.setItem("OwnerView", owner);
+				localStorage.setItem("previousOwnerView", owner);
+				var endPeersRow = document.getElementById("endPeersRow");
+				var pendingDiv = document.getElementById("pending-updates-content");
+				var ownerContainerDiv = document.createElement('div');
+				ownerContainerDiv.id = ('owner-' + owner);
+				if(owner === 4){
+					for (i = 0; i < endPeersInfo.length; i ++) {
+						for(j = 0; j < endPeersInfo[i].length; j++){
+							var key = endPeersInfo[i][j] + '-pending-update-info';
+							if(localStorage.getItem(key) != null){
+								var updateTemplate = $('#networkOwnerPendingUpdateTemplate');
+								updateInfo = JSON.parse(localStorage.getItem(key));
+								var deviceContainerDiv = document.createElement('div');
+								deviceContainerDiv.id = ('device-' + endPeersInfo[i][j]);
+								updateTemplate.find('.update-file').text(updateInfo[0]);
+								updateTemplate.find('.update-request-price').text(updateInfo[1] + '(szabo)');
+								updateTemplate.find('.update-hash').text(updateInfo[2]);
+								updateTemplate.find('.update-request-time').text(updateInfo[3]);
+								updateTemplate.find('.update-offer-transporter').text(updateInfo[4]);
+								updateTemplate.find('.update-offer-price').text(updateInfo[5] + '(szabo)');
+								updateTemplate.find('.update-item-image').attr('src', getImage(endPeersInfo[i][j]));
+								updateTemplate.find('.update-device-IP').text(endPeersInfo[i][j]);
+								updateTemplate.find('.update-device-owner').text(updateInfo[6]);
+								// edit here
+								updateTemplate.find('.update-button-refresh').attr('data-id', endPeersInfo[i][j]);
+								updateTemplate.find('.update-button-pay').attr('data-id', endPeersInfo[i][j]);
+								deviceContainerDiv.innerHTML = updateTemplate.html();
+								pendingDiv.appendChild(deviceContainerDiv);
+							}else{				
+								var update_file_name = "-";
+								var update_file_time = "-";
+								var latestUpdateInfoKey = endPeersInfo[i][j]+'-latest-update-info';
+								if(localStorage.getItem(latestUpdateInfoKey) != null){
+									latestUpdateValue = JSON.parse(localStorage.getItem(latestUpdateInfoKey));
+									update_file_name = latestUpdateValue[0];
+									update_file_time = latestUpdateValue[1];
+								}
+								var endPeerTemplate = $('#networkOwnerEndPeerTemplate');
+								var deviceContainerDiv = document.createElement('div');
+								deviceContainerDiv.id = ('device-' + endPeersInfo[i][j]);
+								endPeerTemplate.find('.panel-title').text(endPeersInfo[i][j]);
+								endPeerTemplate.find('img').attr('src', getImage(endPeersInfo[i][j]));
+								endPeerTemplate.find('.device-owner').text('owner-' + (i+1));
+								endPeerTemplate.find('.device-file').text(update_file_name);
+								endPeerTemplate.find('.device-time').text(update_file_time);
+								deviceContainerDiv.innerHTML = endPeerTemplate.html();
+								ownerContainerDiv.innerHTML = ownerContainerDiv.innerHTML + deviceContainerDiv.outerHTML;
+							}
+						}
+					}
+				}
+				else{
+					for (i = 0; i < endPeersInfo[owner].length; i ++) {
+						var key = endPeersInfo[owner][i] + '-pending-update-info';
+						if(localStorage.getItem(key) != null){
+							var updateTemplate = $('#deviceOwnerPendingUpdateTemplate');
+							updateInfo = JSON.parse(localStorage.getItem(key));
+							var deviceContainerDiv = document.createElement('div');
+							deviceContainerDiv.id = ('device-' + endPeersInfo[owner][i]);
+							updateTemplate.find('.update-file').text(updateInfo[0]);
+							updateTemplate.find('.update-request-price').text(updateInfo[1] + '(szabo)');
+							updateTemplate.find('.update-hash').text(updateInfo[2]);
+							updateTemplate.find('.update-request-time').text(updateInfo[3]);
+							updateTemplate.find('.update-offer-transporter').text(updateInfo[4]);
+							updateTemplate.find('.update-offer-price').text(updateInfo[5] + '(szabo)');
+							updateTemplate.find('.update-button-cancel').attr('data-id', endPeersInfo[owner][i]);
+							updateTemplate.find('.update-item-image').attr('src', getImage(endPeersInfo[owner][i]));
+							updateTemplate.find('.update-device-IP').text(endPeersInfo[owner][i]);
+							deviceContainerDiv.innerHTML = updateTemplate.html();
+							pendingDiv.appendChild(deviceContainerDiv);
+						}else{
+							var update_file_name = "-";
+							var update_file_time = "-";
+							var latestUpdateInfoKey = endPeersInfo[owner][i]+'-latest-update-info';
+							if(localStorage.getItem(latestUpdateInfoKey) != null){
+								latestUpdateValue = JSON.parse(localStorage.getItem(latestUpdateInfoKey));
+								update_file_name = latestUpdateValue[0];
+								update_file_time = latestUpdateValue[1];
+							}
+							var endPeerTemplate = $('#deviceOwnerEndPeerTemplate');
+							var deviceContainerDiv = document.createElement('div');
+							deviceContainerDiv.id = ('device-' + endPeersInfo[owner][i]);
+							endPeerTemplate.find('.panel-title').text(endPeersInfo[owner][i]);
+							endPeerTemplate.find('img').attr('src', getImage(endPeersInfo[owner][i]));
+							endPeerTemplate.find('.btn-update').attr('data-id', endPeersInfo[owner][i]);
+							endPeerTemplate.find('.device-owner').text('owner-' + (owner+1));
+							endPeerTemplate.find('.device-file').text(update_file_name);
+							endPeerTemplate.find('.device-time').text(update_file_time);
+							deviceContainerDiv.innerHTML = endPeerTemplate.html();
+							ownerContainerDiv.innerHTML = ownerContainerDiv.innerHTML + deviceContainerDiv.outerHTML;
+						}
+					}
+				}
+				endPeersRow.appendChild(ownerContainerDiv);	
+			}		
+			if(previousOwner === -1){
+				localStorage.setItem("previousOwnerView", owner);
+			}
+			
+		}
+
+		function clearPreviousDevices(inputOwner){
+			previousOwner = parseInt(inputOwner);
+			if(previousOwner === -1){
+				return;
+			}
+			id = "owner-" + previousOwner;
+			var elem = document.getElementById(id);
+			if(elem != null){
+    			elem.parentNode.removeChild(elem);
+			}
+		}
+
+		function clearPreviousUpdates(){
+			var myNode = document.getElementById("pending-updates-content");
+			while (myNode.firstChild) {
+				myNode.removeChild(myNode.firstChild);
+			}
+		}
+
+		function getImage(deviceIP){
+			var cacheImape = localStorage.getItem(("device-image-" + deviceIP));
+			if(cacheImape != null){
+				return ("images/devices/device" + cacheImape + "." + "PNG")
+			}else{
+				index = Math.floor(Math.random() * 9); 
+				localStorage.setItem(("device-image-" + deviceIP), index);
+				return ("images/devices/device" + index + "." + "PNG")
+			}
+		}
+	</script>
+
+	<script>
+		window.onscroll = function() {myFunction()};
+		var header = document.getElementById("myHeader");
+		var sticky = header.offsetTop;
+		function myFunction() {
+			if (window.pageYOffset > sticky) {
+				header.classList.add("custom-sticky");
+			} else {
+				header.classList.remove("custom-sticky");
+			}
+		}
+	</script>
+
+	<script>
+		document.getElementById("update-entry-uploadUpdate").addEventListener("click", function(){
+			var nodeToUpdateID = localStorage.getItem("current-ongoing-update-nodeIP");
+			var updateFile = document.getElementById("update-entry-updateFile");
+			var dueDate = document.getElementById("update-entry-dueDate");
+			var updatePrice = document.getElementById("update-entry-price");
+			// dueDate.min = minDatePicker;
+			// dueDate.setAttribute("min", minDatePicker);
+			errorHandler = document.getElementById("update-entry-status");
+			entryCheck = checkEntry(updateFile, dueDate);
+				if(entryCheck === "okay"){
+					var fileName = getFileNameFromPath(updateFile.value);
+					var price = updatePrice.value;
+					if(price === ""){
+						price = 0;
+					}
+					var httpRequest = new XMLHttpRequest();
+					httpRequest.open('POST', localStorage.getItem("connectionURL"), true);
+					var formData = new FormData();
+					formData.append("", "");
+					formData.append("command", "fileTransfer");
+					formData.append("target", nodeToUpdateID);
+					formData.append("dueDate", dueDate.value);
+					formData.append("updateFile", updateFile.files[0]);
+					formData.append("updateFileName", fileName);
+					formData.append("updatePrice", price);
+					httpRequest.send(formData);
+					httpRequest.onreadystatechange = function() {//Call a function when the state changes.	
+						if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+							setPendingUpdate(nodeToUpdateID,fileName,httpRequest.responseText,price);
+							errorHandler.innerHTML = "";
+							updateFile.value="";
+							$('#updateModal').modal('hide');
+						}
+						else if(httpRequest.status != 200){
+							errorHandler.innerHTML = "There was an error sending your request";
+							errorHandler.style.color = "red";
+						}
+					}
+				}
+				else{	
+					errorHandler.innerHTML = entryCheck;
+					errorHandler.style.color = "red";
+				}
+		});
+
+		function openUpdateModal(){
+			getMinUpdateDueDate();
+			var nodeToUpdateID = event.target.getAttribute("data-id");
+			localStorage.setItem("current-ongoing-update-nodeIP", nodeToUpdateID)
+			$('#updateModal').modal('toggle');
+			document.getElementById('update-entry-deviceIP').value = nodeToUpdateID;
+			document.getElementById('update-entry-status').innerHTML = "";
+			document.getElementById('update-entry-dueDate').value = "";
+		}
+
+		function getFileNameFromPath(fullPath){
+			var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+			var filename = fullPath.substring(startIndex);
+			if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+				filename = filename.substring(1);
+			}
+			return filename;
+		}
+
+		function checkEntry(updateFile, dueDate){
+			if(updateFile.files.length > 0){
+				var now = new Date();
+				// if(Date.parse(dueDate.value) < Date.parse(now)){
+					// return "ERROR: Due Date is invalid";
+				// }else{
+					return "okay";
+				// }
+			}else{
+				return "ERROR: No file chosen";
+			}
+		}
+
+		function sleep(miliseconds) {
+			var currentTime = new Date().getTime();
+			while (currentTime + miliseconds >= new Date().getTime()) {
+			}
+		}
+
+		function getMinUpdateDueDate(){
+			var today = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+			var dd = today.getDate();
+			var mm = today.getMonth()+1; //January is 0!
+			var yyyy = today.getFullYear();
+			if(dd<10){
+					dd='0'+dd
+				} 
+				if(mm<10){
+					mm='0'+mm
+				} 
+
+			today = yyyy+'-'+mm+'-'+dd;
+			document.getElementById("update-entry-dueDate").setAttribute("min", today);
+		}
+	</script>
+
+	</body>
+</html>

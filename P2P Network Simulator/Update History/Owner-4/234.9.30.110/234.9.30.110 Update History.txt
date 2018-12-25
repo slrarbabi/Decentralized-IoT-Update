@@ -1,0 +1,5 @@
+----------------------------------------------------------
+New update added for device: (234.9.30.110), with file name: (update.jpg), size: (440892), hash: (53599f3b1bfc6569ea82807faf216a7c7a00203f0c3f138c64c16147c8f0e819), at time: (2018/08/22-21:29:54),device owner was: (Owner-4
+Sender was: (34.244.173.254), with update price of: 7654321), and transfer price of: (8000), sender owner was: (Owner-6)
+----------------------------------------------------------
+
