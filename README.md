@@ -16,5 +16,5 @@ Clone the repository and open the Java Network Simulator in IntelliJ. If you are
 ```
 Deploy the smart contracts on Remix web-IDE and connect it to Ganache by selecting the "web-3 provider" as your environment.
 ```
-After deploying your contracts, you will need to copy your account address and update the contract ABI (if modified contracts).
-Run index.html to use the application
+* After deploying your contracts, you will need to copy your account address and update the contract ABI (if modified contracts).
+* Run index.html to use the application
